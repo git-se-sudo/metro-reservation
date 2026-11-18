@@ -1,0 +1,43 @@
+
+services:
+  metro-db:
+    image: mysql:8
+    container_name: metro-db
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: metrodb
+      MYSQL_USER: metro
+      MYSQL_PASSWORD: metro123
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - metro-data:/var/lib/mysql
+
+    networks:
+      - metro-network
+
+  metro-app:
+    image: tomcat:9.0
+    container_name: metro-app
+
+    ports:
+      - "8081:8080"
+
+    volumes:
+      - ./target/metro-reservation-1.0.war:/usr/local/tomcat/webapps/metro-reservation.war
+
+    networks:
+      - metro-network
+
+    depends_on:
+      - metro-db
+
+volumes:
+  metro-data:
+
+networks:
+  metro-network:
+    driver: bridge
